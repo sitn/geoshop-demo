@@ -1,0 +1,116 @@
+{
+  "apiUrl": "https://localhost/api",
+  "mediaUrl": "https://localhost/api",
+  "baseMapUrl": "https://wmts.geo.admin.ch/1.0.0/{layer}/{style}/current/{TileMatrixSet}/{TileMatrix}/{TileCol}/{TileRow}",
+  "searchf": {
+    "url": "https://ugsp-geoportal-test.camptocamp.com/search",
+    "queryParamName": "query",
+    "querySuffix": "limit=30&partitionlimit=5&interface=desktop&lang=en",
+    "providerType": "mapfish"
+  },
+  "search": {
+    "url": "https://api3.geo.admin.ch/rest/services/api/SearchServer",
+    "queryParamName": "searchText",
+    "querySuffix": "limit=5&geometryFormat=geojson&type=locations&sr=2056&origins=district,gg25,parcel,address",
+    "providerType": "geocoder"
+  },
+  "contact": {
+    "phone": {
+      "label": "",
+      "number": ""
+    },
+    "links": {
+      "conditions": "http://conditions",
+      "tariffs": "http://tariffs"
+    },
+    "email": "info@geogr.ch"
+  },
+  "initialCenter": [
+    2765505.527577451,
+    1173931.8492200195
+  ],
+  "initialExtent": [
+    2419995.7488073637,
+    1030006.663199476,
+    2900009.727428728,
+    1350004.292478851
+  ],
+  "resolutions": [
+    250,
+    100,
+    50,
+    20,
+    10,
+    5,
+    2.5,
+    2,
+    1.5,
+    1,
+    0.5,
+    0.25
+  ],
+  "epsg": "EPSG:2056",
+  "basemaps": [
+    {
+      "id": "ch.swisstopo.pixelkarte-grau",
+      "label": "Landeskarten (grau)",
+      "description": "Landeskarten (grau)",
+      "thumbUrl": "assets/images/planville.png",
+      "matrixSet": "2056",
+      "format": "jpeg",
+      "boundingBoxWGS84": [
+        5.140242,
+        45.398181,
+        11.47757,
+        48.230651
+      ]
+    },
+    {
+      "id": "ch.swisstopo.pixelkarte-grau",
+      "label": "Karte Grau",
+      "description": "Karte Grau",
+      "thumbUrl": "assets/images/cadastre.png",
+      "matrixSet": "2056",
+      "format": "jpeg",
+      "boundingBoxWGS84": [
+        5.140242,
+        45.398181,
+        11.47757,
+        48.230651
+      ]
+    }
+  ],
+  "pageformats": [
+    {
+      "name": "A4",
+      "width": 210,
+      "height": 297
+    },
+    {
+      "name": "A3",
+      "width": 297,
+      "height": 420
+    },
+    {
+      "name": "A2",
+      "width": 420,
+      "height": 594
+    },
+    {
+      "name": "A1",
+      "width": 594,
+      "height": 841
+    },
+    {
+      "name": "A0",
+      "width": 841,
+      "height": 1189
+    }
+  ],
+  "localAuthEnabled": true,
+  "noBillingForFreeOrder": true,
+  "appLogo": {
+    "path": "assets/images/logo.png",
+    "alt": "Company logo"
+  }
+}

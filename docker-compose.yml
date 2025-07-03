@@ -1,0 +1,112 @@
+services:
+  db:
+    image: postgis/postgis:15-3.4-alpine
+    environment:
+      POSTGRES_USER: "${PGUSER}"
+      POSTGRES_PASSWORD: "${PGPASSWORD}"
+      POSTGRES_DB: "${PGDATABASE}"
+      LANG: "en_US.utf8"
+      LC_COLLATE: "en_US.utf8"
+      LC_CTYPE: "en_US.utf8"
+    env_file: .env
+    ports:
+      - 5432:5432
+    networks:
+      - geoshop
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${PGUSER} -d ${PGDATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data:rw
+      - ./geoshop-back/resources/db:/docker-entrypoint-initdb.d:ro
+
+  migrate:
+    image: geoshop-api
+    build:
+      context: geoshop-back
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      PGHOST: "db"
+    command: >
+      bash -c "
+      python3 manage.py migrate &&
+      python3 manage.py collectstatic --noinput &&
+      python3 manage.py fixturize"
+    volumes:
+      - "static-files:/app/geoshop_back/static:rw"
+    networks:
+      - geoshop
+
+
+  api:
+    image: geoshop-api
+    build:
+      context: ./geoshop-back
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    env_file: .env
+    environment:
+      PGHOST: "db"
+    command: gunicorn wsgi -b :8000 --timeout 90
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://127.0.0.1:8000/health/readiness || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - "static-files:/app/geoshop_back/static:ro"
+      - "./testdata:/testdata:ro"
+    ports:
+      - "8000:8000"
+    networks:
+      - geoshop
+
+  front:
+    build:
+      context: ./geoshop-front
+      dockerfile: Dockerfile
+    ports:
+      - "4200:8080"
+    volumes:
+      - ./config.json:/usr/share/nginx/html/de/assets/configs/config.json:ro
+      - ./config.json:/usr/share/nginx/html/fr/assets/configs/config.json:ro
+      - ./config.json:/usr/share/nginx/html/en/assets/configs/config.json:ro
+    depends_on:
+      - api
+    networks:
+      - geoshop
+
+
+  proxy:
+    image: nginxinc/nginx-unprivileged:stable
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - api
+      - front
+    networks:
+      - geoshop
+
+networks:
+  geoshop:
+    driver: bridge
+
+volumes:
+  static-files:

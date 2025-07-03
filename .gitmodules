@@ -1,0 +1,6 @@
+[submodule "geoshop-front"]
+	path = geoshop-front
+	url = https://github.com/camptocamp/geoshop-front.git
+[submodule "geoshop-back"]
+	path = geoshop-back
+	url = https://github.com/camptocamp/geoshop-back.git
