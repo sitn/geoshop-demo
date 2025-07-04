@@ -1,0 +1,41 @@
+
+  pgsql:
+    image: postgis/postgis:15-3.4-alpine
+    volumes:
+      - ./extract-data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=extract
+      - POSTGRES_USER=extractuser
+      - POSTGRES_PASSWORD=demopassword
+
+  extract:
+    build: ./tomcat
+    depends_on:
+      pgsql:
+        condition: service_started
+    # TODO: compile it in a docker container
+    volumes:
+      - ./extract-data/log:/var/log/extract
+      - ./extract-data/tomcat-logs:/usr/local/tomcat/logs
+    environment:
+      - JAVA_OPTS=-Xms1G -Xmx2G -Duser.language=fr -Duser.region=CH -Dcom.sun.jndi.ldap.connect.pool.timeout=20000
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: curl --fail http://localhost:8080/extract || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 15
+
+  update_db_on_start:
+    build: ./docker/update-db
+    depends_on:
+      extract:
+        condition: service_healthy
+    volumes:
+      - ./sql/update_db.sql:/update_db.sql
+    environment:
+      - PGHOST=pgsql
+      - PGDB=extract
+      - PGUSER=extractuser
+      - PGPASSWORD=demopassword
