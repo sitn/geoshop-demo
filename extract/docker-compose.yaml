@@ -1,4 +1,4 @@
-
+services:
   pgsql:
     image: postgis/postgis:15-3.4-alpine
     volumes:
@@ -28,7 +28,7 @@
       retries: 15
 
   update_db_on_start:
-    build: ./docker/update-db
+    build: ./update-db
     depends_on:
       extract:
         condition: service_healthy
