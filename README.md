@@ -1,5 +1,8 @@
 # Geoshop demo
 
+## Requirements
+
+Make sure your ports 8080 and 443 are available.
 
 ## Geoshop
 Run geoshop
@@ -21,3 +24,5 @@ In another terminal
 cd extract
 docker compose up -d
 ```
+
+Extract is available at http://localhost:8080/extract/setup
