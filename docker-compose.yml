@@ -8,7 +8,6 @@ services:
       LANG: "en_US.utf8"
       LC_COLLATE: "en_US.utf8"
       LC_CTYPE: "en_US.utf8"
-    env_file: .env
     networks:
       - geoshop
     healthcheck:
@@ -30,7 +29,7 @@ services:
         condition: service_healthy
     env_file: .env
     environment:
-      PGHOST: "db"
+      PGHOST: "${PGHOST}"
     command: >
       bash -c "
       python3 manage.py migrate &&
@@ -53,7 +52,7 @@ services:
         condition: service_completed_successfully
     env_file: .env
     environment:
-      PGHOST: "db"
+      PGHOST: "${PGHOST}"
     command: gunicorn wsgi -b :8000 --timeout 90
     restart: unless-stopped
     healthcheck:
