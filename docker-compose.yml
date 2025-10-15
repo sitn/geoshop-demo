@@ -22,8 +22,6 @@ services:
 
   migrate:
     image: geoshop-api
-    build:
-      context: geoshop-back
     depends_on:
       db:
         condition: service_healthy
